@@ -1,6 +1,3 @@
-// Antony Zhu
-// With configurable path and filename
-
 /********* CDVAudioInputCapture.m Cordova Plugin Implementation *******/
 
 #import <Cordova/CDV.h>
@@ -66,9 +63,9 @@
 
     //如果js端传过来的filename或filepath为空，则用默认的路径，并去掉cordova默认路径当中的file://
     //filename后面需要加上mp3的后缀
-    if (self.filepath
+    if (![self.filepath isEqual:[NSNull null]]
         &&
-        self.filename) {
+        ![self.filename isEqual:[NSNull null]]) {
         
         NSRange fileStr = [self.filepath rangeOfString:@"file://"];
         if (fileStr.length) {
@@ -92,6 +89,7 @@
     } else {
         self.filepath = @"";
         self.filename = @"";
+        
         self.recorder = [[XMNAudioRecorder alloc] init];
         self.recorder.encoderType = XMNAudioEncoderTypeMP3;
         self.recorder.sampleRate = 44100;
@@ -114,9 +112,9 @@
     if (self.callbackId) {
         NSString* filePath = @"";
         //如果js端传过来的filename或filepath为空，则用默认的路径，并去掉cordova默认路径当中的file://
-        if (self.filename.length > 0
+        if (self.filepath.length > 0
             &&
-            self.filepath.length > 0) {
+            self.filename.length > 0) {
             filePath = [self.filepath stringByAppendingString:self.filename];
             NSRange fileStr = [filePath rangeOfString:@"file://"];
             if (fileStr.length) {
