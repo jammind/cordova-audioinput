@@ -91,7 +91,7 @@
     
     } else {
         self.filepath = @"";
-        self.fliename = @"";
+        self.filename = @"";
         self.recorder = [[XMNAudioRecorder alloc] init];
         self.recorder.encoderType = XMNAudioEncoderTypeMP3;
         self.recorder.sampleRate = 44100;
