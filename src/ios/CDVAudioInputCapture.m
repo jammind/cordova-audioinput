@@ -84,10 +84,7 @@
         self.recorder.sampleRate = 44100;
         self.recorder.delegate = self;
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            [self.recorder startRecordingWithFileName:self.filename];
-        });
-    
+        [self.recorder startRecordingWithFileName:self.filename];
     } else {
         self.filepath = @"";
         self.filename = @"";
@@ -97,9 +94,7 @@
         self.recorder.sampleRate = 44100;
         self.recorder.delegate = self;
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            [self.recorder startRecording];
-        });
+        [self.recorder startRecording];
     }
 }
 
