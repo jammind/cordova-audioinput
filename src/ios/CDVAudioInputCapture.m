@@ -84,7 +84,9 @@
         self.recorder.sampleRate = 44100;
         self.recorder.delegate = self;
         
-        [self.recorder startRecordingWithFileName:self.filename];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [self.recorder startRecordingWithFileName:self.filename];
+        });
     
     } else {
         self.filepath = @"";
@@ -95,9 +97,10 @@
         self.recorder.sampleRate = 44100;
         self.recorder.delegate = self;
         
-        [self.recorder startRecording];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [self.recorder startRecording];
+        });
     }
-
 }
 
 - (void)stop:(CDVInvokedUrlCommand*)command {
