@@ -70,7 +70,7 @@ audioinput.DEFAULT = {
  *  concatenateMaxChunks (How many packets will be merged each time, low = low latency but can require more resources)
  *  audioSourceType (Use audioinput.AUDIOSOURCE_TYPE.)
  */
-audioinput.start = function (cfg) {
+audioinput.start = function (cfg, onError) {
     if (!audioinput._capturing) {
 
         if (!cfg) {
@@ -106,7 +106,7 @@ audioinput.start = function (cfg) {
             throw "Invalid concatenateMaxChunks (" + audioinput._cfg.concatenateMaxChunks + "). Must be greater than zero.";
         }
 
-        exec(audioinput._audioInputEvent, audioinput._audioInputErrorEvent, "AudioInputCapture", "start",
+        exec(audioinput._audioInputEvent, onError, "AudioInputCapture", "start",
             [audioinput._cfg.sampleRate,
              audioinput._cfg.bufferSize,
              audioinput._cfg.channels,
