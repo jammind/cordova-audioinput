@@ -152,16 +152,16 @@ audioinput.stop = function (onSuccess, onError) {
         audioinput._audioDataQueue = null;
     }
 
-    function _onSuccess () {
+    function _onSuccess (result) {
         console.log('audioinput.stop() _onSuccess');
         audioinput._capturing = false;
-        if (typeof onSuccess == 'function') onSuccess();
+        if (typeof onSuccess == 'function') onSuccess(result);
     }
 
-    function _onError () {
+    function _onError (result) {
         console.log('audioinput.stop() _onError');
         audioinput._capturing = false;
-        if (typeof onError == 'function') onError();
+        if (typeof onError == 'function') onError(result);
     }
     
 };
