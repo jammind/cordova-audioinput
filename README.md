@@ -22,7 +22,11 @@ cordova plugin add cordova-plugin-audioinput
 
 or by using the GitHub project URL:
 ```
-cordova plugin add https://github.com/edimuj/cordova-plugin-audioinput.git
+cordova plugin add https://github.com/jammind/cordova-audioinput.git
+```
+## Uninstallation
+```
+cordova plugin rm cordova-plugin-audioinput
 ```
 
 Building with the Intel XDK is also supported. I haven't tested the plugin with PhoneGap build, so feel free to message me if you tried it with success there.
