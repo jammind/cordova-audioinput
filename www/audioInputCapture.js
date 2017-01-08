@@ -139,10 +139,10 @@ audioinput.start = function (cfg, onError) {
 /**
  * Stop capturing audio
  */
-audioinput.stop = function (onSuccess,onError) {
+audioinput.stop = function (onSuccess, onError) {
     if (audioinput._capturing) {
-        exec(onSuccess, onError, "AudioInputCapture", "stop", []);
-        audioinput._capturing = false;
+        exec(_onSuccess, _onError, "AudioInputCapture", "stop", []);
+//         audioinput._capturing = false;
     }
 
     if (audioinput._cfg.streamToWebAudio) {
@@ -152,6 +152,18 @@ audioinput.stop = function (onSuccess,onError) {
         audioinput._audioDataQueue = null;
     }
 
+    function _onSuccess () {
+        console.log('audioinput.stop() _onSuccess');
+        audioinput._capturing = false;
+        if (typeof onSuccess == 'function') onSuccess();
+    }
+
+    function _onError () {
+        console.log('audioinput.stop() _onError');
+        audioinput._capturing = false;
+        if (typeof onError == 'function') onError();
+    }
+    
 };
 
 
