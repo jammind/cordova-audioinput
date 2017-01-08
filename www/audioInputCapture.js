@@ -73,6 +73,8 @@ audioinput.DEFAULT = {
 audioinput.start = function (cfg, onError) {
     if (!audioinput._capturing) {
 
+        audioinput._capturing = true;
+        
         if (!cfg) {
             cfg = {};
         }
@@ -116,7 +118,7 @@ audioinput.start = function (cfg, onError) {
              cfg.filePath
              ]);
 
-        audioinput._capturing = true;
+//        audioinput._capturing = true;
 
         if (audioinput._cfg.streamToWebAudio) {
             if (audioinput._initWebAudio(audioinput._cfg.audioContext)) {
