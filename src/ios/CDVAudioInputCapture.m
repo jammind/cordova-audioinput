@@ -81,7 +81,9 @@
             self.filename = [self.filename stringByAppendingString:@".mp3"];
         }
 
-        self.recorder = [[XMNAudioRecorder alloc] initWithFilePath:self.filepath];
+        if (!self.recorder) {
+            self.recorder = [[XMNAudioRecorder alloc] initWithFilePath:self.filepath];
+        }
         self.recorder.encoderType = XMNAudioEncoderTypeMP3;
         self.recorder.sampleRate = 44100;
         self.recorder.delegate = self;
@@ -98,7 +100,9 @@
         if (externsion.length == 0) {
             self.filename = [self.filename stringByAppendingString:@".mp3"];
         }
-        self.recorder = [[XMNAudioRecorder alloc] init];
+        if (!self.recorder) {
+            self.recorder = [[XMNAudioRecorder alloc] init];
+        }
         self.recorder.encoderType = XMNAudioEncoderTypeMP3;
         self.recorder.sampleRate = 44100;
         self.recorder.delegate = self;
@@ -117,7 +121,10 @@
                 self.filepath = [self.filepath stringByReplacingOccurrencesOfString:@"file://" withString:@""];
             }
         }
-        self.recorder = [[XMNAudioRecorder alloc] initWithFilePath:self.filepath];
+        
+        if (!self.recorder) {
+            self.recorder = [[XMNAudioRecorder alloc] initWithFilePath:self.filepath];
+        }
         self.recorder.encoderType = XMNAudioEncoderTypeMP3;
         self.recorder.sampleRate = 44100;
         self.recorder.delegate = self;
@@ -129,8 +136,9 @@
     } else {
         self.filepath = @"";
         self.filename = @"";
-        
-        self.recorder = [[XMNAudioRecorder alloc] init];
+        if (!self.recorder) {
+            self.recorder = [[XMNAudioRecorder alloc] init];
+        }
         self.recorder.encoderType = XMNAudioEncoderTypeMP3;
         self.recorder.sampleRate = 44100;
         self.recorder.delegate = self;
