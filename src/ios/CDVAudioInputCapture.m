@@ -54,7 +54,6 @@
 
 - (void)start:(CDVInvokedUrlCommand*)command {
     self.callbackId = command.callbackId;
-
     [self startRecording:command];
 }
 
@@ -62,6 +61,18 @@
 - (void)startRecording:(CDVInvokedUrlCommand*)command {
     self.filename = [command.arguments objectAtIndex:5];
     self.filepath = [command.arguments objectAtIndex:6];
+
+    NSDate *startTime = [NSDate date];
+    NSDate *lastTime = [[NSUserDefaults standardUserDefaults] valueForKey:@"startTime"];
+    if (!lastTime) {
+        lastTime = [NSDate distantPast];
+    }
+    NSTimeInterval timeInterval = [startTime timeIntervalSinceDate:lastTime];
+    if (timeInterval > 0.5) {
+        [[NSUserDefaults standardUserDefaults] setValue:startTime forKey:@"startTime"];
+    } else {
+        return;
+    }
 
     //如果js端传过来的filename或filepath为空，则用默认的路径，并去掉cordova默认路径当中的file://
     //filename后面需要加上mp3的后缀
