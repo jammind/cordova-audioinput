@@ -29,7 +29,26 @@ cordova plugin add https://github.com/jammind/cordova-audioinput.git
 cordova plugin rm cordova-plugin-audioinput
 ```
 
-Building with the Intel XDK is also supported. I haven't tested the plugin with PhoneGap build, so feel free to message me if you tried it with success there.
+iOS Quirk
+audioinput.start() will cause iOS WebAudio sound to be very light or even muted. Be sure to MANUALLY add the following lines into AppDelegate.m in your XCode project to solve this problem.
+```
+@implementation AppDelegate
+
+- (BOOL)application:(UIApplication*)application didFinishLaunchingWithOptions:(NSDictionary*)launchOptions
+{
+    // Add following lines in front of initialization of MainViewController
+    [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayAndRecord error:nil];
+    
+    UInt32 audioRouteOverride = kAudioSessionOverrideAudioRoute_Speaker;
+    AudioSessionSetProperty (kAudioSessionProperty_OverrideAudioRoute,
+                             sizeof (audioRouteOverride),
+                             &audioRouteOverride);
+    // End of AudioInput modification
+    
+    self.viewController = [[MainViewController alloc] init];
+    return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+```
 
 ## Events
 When using the event based approach, the plugin sends the following `window` events:
