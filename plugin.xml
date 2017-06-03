@@ -57,8 +57,8 @@
         <framework src="QuartzCore.framework" />
         
         <source-file src="src/ios/XMNAudio/Info.plist" />
-        <header-file src="src/ios/XMNAudio/XMNAudio.h" framework="true"/>
-        <header-file src="src/ios/XMNAudio/XMNAudioConfiguration.h" framework="true"/>
+        <header-file src="src/ios/XMNAudio/XMNAudio.h"/>
+        <header-file src="src/ios/XMNAudio/XMNAudioConfiguration.h"/>
 
         <framework src="src/ios/XMNAudio/Vendors/lame_mp3/lame.framework" custom="true" />
         <header-file src="src/ios/XMNAudio/Vendors/libopencore_amr/include/opencore-amrnb/interf_dec.h" />
@@ -68,11 +68,11 @@
         <source-file src="src/ios/HWWeakTimer/HWWeakTimer.m" />
         <header-file src="src/ios/HWWeakTimer/HWWeakTimer.h" />
 
-        <header-file src="src/ios/XMNAudio/XMNAudioRecorder/XMNAudioEncoder.h" framework="true"/>
-        <source-file src="src/ios/XMNAudio/XMNAudioRecorder/XMNAudioEncoder.m" framework="true"/>
+        <header-file src="src/ios/XMNAudio/XMNAudioRecorder/XMNAudioEncoder.h"/>
+        <source-file src="src/ios/XMNAudio/XMNAudioRecorder/XMNAudioEncoder.m"/>
 
-        <header-file src="src/ios/XMNAudio/XMNAudioRecorder/XMNAudioRecorder.h" framework="true"/>
-        <source-file src="src/ios/XMNAudio/XMNAudioRecorder/XMNAudioRecorder.m" framework="true"/>
+        <header-file src="src/ios/XMNAudio/XMNAudioRecorder/XMNAudioRecorder.h"/>
+        <source-file src="src/ios/XMNAudio/XMNAudioRecorder/XMNAudioRecorder.m"/>
     </platform>
 
 </plugin>
