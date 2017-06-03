@@ -145,7 +145,7 @@ audioinput.stop = function (onSuccess, onError) {
 //         audioinput._capturing = false;
     }
 
-    if (audioinput._cfg.streamToWebAudio) {
+    if (audioinput._cfg && audioinput._cfg.streamToWebAudio) {
         if (audioinput._timerGetNextAudio) {
             clearTimeout(audioinput._timerGetNextAudio);
         }

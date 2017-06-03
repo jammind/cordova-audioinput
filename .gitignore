@@ -9,3 +9,5 @@
 !/plugin.xml
 
 src/.DS_Store
+
+src/ios/XMNAudio/Vendors/libopencore_amr/.DS_Store
