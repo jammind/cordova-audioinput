@@ -236,7 +236,7 @@ audioinput._audioInputEvent = function (audioInputData) {
             var audioData = JSON.parse(audioInputData.data);
             audioData = audioinput._normalizeAudio(audioData);
 
-            if (audioinput._cfg.streamToWebAudio && audioinput._capturing) {
+            if (audioinput._cfg && audioinput._cfg.streamToWebAudio && audioinput._capturing) {
                 audioinput._enqueueAudioData(audioData);
             }
             else {
@@ -269,7 +269,7 @@ audioinput._audioInputErrorEvent = function (e) {
  */
 audioinput._normalizeAudio = function (pcmData) {
 
-    if (audioinput._cfg.normalize) {
+    if (audioinput._cfg && audioinput._cfg.normalize) {
         for (var i = 0; i < pcmData.length; i++) {
             pcmData[i] = parseFloat(pcmData[i] / audioinput._cfg.normalizationFactor);
         }

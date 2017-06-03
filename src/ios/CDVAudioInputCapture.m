@@ -2,7 +2,6 @@
 
 #import <Cordova/CDV.h>
 #import "XMNAudioRecorder.h"
-#import "CDVFile.h"
 #import <Foundation/Foundation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <AVFoundation/AVFoundation.h>
@@ -18,7 +17,8 @@
 @property (strong, nonatomic) XMNAudioRecorder *recorder;
 @property (strong, nonatomic) NSString *filename;
 @property (strong, nonatomic) NSString *filepath;
-@property (nonatomic, weak) NSTimer *timer;
+@property (weak, nonatomic) NSTimer *timer;
+@property (assign,nonatomic) BOOL doNotSaveFile;
 
 - (void)start:(CDVInvokedUrlCommand*)command;
 - (void)stop:(CDVInvokedUrlCommand*)command;
@@ -62,6 +62,8 @@
     self.filename = [command.arguments objectAtIndex:5];
     self.filepath = [command.arguments objectAtIndex:6];
 
+    self.doNotSaveFile = NO;
+    
     NSDate *startTime = [NSDate date];
     NSDate *lastTime = [[NSUserDefaults standardUserDefaults] valueForKey:@"startTime"];
     if (!lastTime) {
@@ -95,9 +97,7 @@
         if (!self.recorder) {
             self.recorder = [[XMNAudioRecorder alloc] initWithFilePath:self.filepath];
         }
-        self.recorder.encoderType = XMNAudioEncoderTypeMP3;
-        self.recorder.sampleRate = 44100;
-        self.recorder.delegate = self;
+        [self setupRecorder];
         [self sendStartRecording];
         [self.commandDelegate runInBackground:^{
             [self.recorder startRecordingWithFileName:self.filename];
@@ -114,9 +114,7 @@
         if (!self.recorder) {
             self.recorder = [[XMNAudioRecorder alloc] init];
         }
-        self.recorder.encoderType = XMNAudioEncoderTypeMP3;
-        self.recorder.sampleRate = 44100;
-        self.recorder.delegate = self;
+        [self setupRecorder];
         [self sendStartRecording];
         [self.commandDelegate runInBackground:^{
             [self.recorder startRecordingWithFileName:self.filename];
@@ -136,9 +134,7 @@
         if (!self.recorder) {
             self.recorder = [[XMNAudioRecorder alloc] initWithFilePath:self.filepath];
         }
-        self.recorder.encoderType = XMNAudioEncoderTypeMP3;
-        self.recorder.sampleRate = 44100;
-        self.recorder.delegate = self;
+        [self setupRecorder];
         [self sendStartRecording];
         [self.commandDelegate runInBackground:^{
             [self.recorder startRecording];
@@ -147,18 +143,24 @@
     } else {
         self.filepath = @"";
         self.filename = @"";
+        self.doNotSaveFile = YES;
         if (!self.recorder) {
             self.recorder = [[XMNAudioRecorder alloc] init];
         }
-        self.recorder.encoderType = XMNAudioEncoderTypeMP3;
-        self.recorder.sampleRate = 44100;
-        self.recorder.delegate = self;
+        [self setupRecorder];
         [self sendStartRecording];
         [self.commandDelegate runInBackground:^{
             [self.recorder startRecording];
         }];
     }
 
+}
+    
+- (void)setupRecorder {
+    self.recorder.encoderType = XMNAudioEncoderTypeMP3;
+    self.recorder.sampleRate = 44100;
+    self.recorder.delegate = self;
+    self.recorder.maxSeconds = 30.0;
 }
 
 - (void)sendStartRecording {
@@ -190,15 +192,18 @@
 - (void)stop:(CDVInvokedUrlCommand*)command {
     self.callbackId = command.callbackId;
     [self.commandDelegate runInBackground:^{
-        [self stopRecordIngImp];
-        [self.recorder stopRecording];
+        [_timer invalidate];
+        if (self.doNotSaveFile) {
+            [self.recorder stopRecordingAndDeleteFile];
+        } else {
+            [self stopRecordIngImp];
+            [self.recorder stopRecording];
+        }
     }];
 }
 
 - (void)stopRecordIngImp {
     if (self.callbackId) {
-        [_timer invalidate];
-
         NSString* filePath = @"";
         //如果js端传过来的filename或filepath为空，则用默认的路径，并去掉cordova默认路径当中的file://
         if (self.filepath.length > 0
