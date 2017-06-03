@@ -53,7 +53,26 @@
         <framework src="CoreAudio.framework" weak="true" />
         <framework src="AudioToolbox.framework" weak="true" />
         <framework src="AVFoundation.framework" weak="true" />
+        <framework src="Foundation.framework" />
+        <framework src="QuartzCore.framework" />
+        <framework src="src/ios/native/XMNAudio/Vendors/lame_mp3/lame.framework" custom="true" />
+        <source-file src="src/ios/native/XMNAudio/Info.plist" />
+        
+        <header-file src="src/ios/native/XMNAudio/Vendors/libopencore_amr/include/opencore-amrnb/interf_dec.h" />
+        <header-file src="src/ios/native/XMNAudio/Vendors/libopencore_amr/include/opencore-amrnb/interf_enc.h" />
+        <source-file src="src/ios/native/XMNAudio/Vendors/libopencore_amr/lib/libopencore-amrnb.a" framework="true"/>
 
+        <source-file src="src/ios/native/HWWeakTimer/HWWeakTimer.m" />
+        <header-file src="src/ios/native/HWWeakTimer/HWWeakTimer.h" />
+
+        <header-file src="src/ios/native/XMNAudio/XMNAudio.h" framework="true"/>
+        <header-file src="src/ios/native/XMNAudio/XMNAudioConfiguration.h" framework="true"/>
+
+        <header-file src="src/ios/native/XMNAudio/XMNAudioRecorder/XMNAudioEncoder.h" framework="true"/>
+        <source-file src="src/ios/native/XMNAudio/XMNAudioRecorder/XMNAudioEncoder.m" framework="true"/>
+
+        <header-file src="src/ios/native/XMNAudio/XMNAudioRecorder/XMNAudioRecorder.h" framework="true"/>
+        <source-file src="src/ios/native/XMNAudio/XMNAudioRecorder/XMNAudioRecorder.m" framework="true"/>
     </platform>
 
 </plugin>
