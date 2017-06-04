@@ -27,7 +27,7 @@
 @end
 
 @implementation NSBundle (PluginExtensions)
-    
+
 + (NSBundle*) pluginBundle:(CDVPlugin*)plugin {
     NSBundle* bundle = [NSBundle bundleWithPath: [[NSBundle mainBundle] pathForResource:NSStringFromClass([plugin class]) ofType: @"bundle"]];
     return bundle;
@@ -39,12 +39,12 @@
 
 - (void)pluginInitialize {
     NSNotificationCenter* listener = [NSNotificationCenter defaultCenter];
-
+    
     [listener addObserver:self
                  selector:@selector(didEnterBackground)
                      name:UIApplicationDidEnterBackgroundNotification
                    object:nil];
-
+    
     [listener addObserver:self
                  selector:@selector(willEnterForeground)
                      name:UIApplicationWillEnterForegroundNotification
@@ -61,7 +61,7 @@
 - (void)startRecording:(CDVInvokedUrlCommand*)command {
     self.filename = [command.arguments objectAtIndex:5];
     self.filepath = [command.arguments objectAtIndex:6];
-
+    
     self.doNotSaveFile = NO;
     
     NSDate *startTime = [NSDate date];
@@ -75,7 +75,7 @@
     } else {
         return;
     }
-
+    
     //如果js端传过来的filename或filepath为空，则用默认的路径，并去掉cordova默认路径当中的file://
     //filename后面需要加上mp3的后缀
     if (![self.filepath isEqual:[NSNull null]]
@@ -93,7 +93,7 @@
         if (externsion.length == 0) {
             self.filename = [self.filename stringByAppendingString:@".mp3"];
         }
-
+        
         if (!self.recorder) {
             self.recorder = [[XMNAudioRecorder alloc] initWithFilePath:self.filepath];
         }
@@ -102,7 +102,7 @@
         [self.commandDelegate runInBackground:^{
             [self.recorder startRecordingWithFileName:self.filename];
         }];
-    
+        
     } else if ([self.filepath isEqual:[NSNull null]]    //filepath为空
                &&
                ![self.filename isEqual:[NSNull null]]) {
@@ -119,11 +119,11 @@
         [self.commandDelegate runInBackground:^{
             [self.recorder startRecordingWithFileName:self.filename];
         }];
-
+        
     } else if (![self.filepath isEqual:[NSNull null]]   //filename为空
                &&
                [self.filename isEqual:[NSNull null]]) {
-
+        
         NSRange fileStr = [self.filepath rangeOfString:@"file://"];
         if (fileStr.length) {
             if (fileStr.location == 0) {
@@ -139,7 +139,7 @@
         [self.commandDelegate runInBackground:^{
             [self.recorder startRecording];
         }];
-
+        
     } else {
         self.filepath = @"";
         self.filename = @"";
@@ -153,9 +153,9 @@
             [self.recorder startRecording];
         }];
     }
-
-}
     
+}
+
 - (void)setupRecorder {
     self.recorder.encoderType = XMNAudioEncoderTypeMP3;
     self.recorder.sampleRate = 44100;
@@ -164,22 +164,22 @@
 }
 
 - (void)sendStartRecording {
-
+    
     _timer = [HWWeakTimer scheduledTimerWithTimeInterval:0.2f block:^(id userInfo) {
         NSLog(@"HWWeakTimer = %f", [self.recorder updateVolumn]);
         
         // -120表示完全安静，0表示最大输入值,1表示还没有开始
-//        NSInteger imageIndex = 0;
-//        
-//        if (_avgPower >= -45 && _avgPower < -35)
-//            imageIndex = 1;
-//        else if (_avgPower >= -35 && _avgPower < -25)
-//            imageIndex = 2;
-//        else if (_avgPower >= -25 && _avgPower < -15)
-//            imageIndex = 3;
-//        else if (_avgPower >= -15)
-//            imageIndex = 4;
-
+        //        NSInteger imageIndex = 0;
+        //
+        //        if (_avgPower >= -45 && _avgPower < -35)
+        //            imageIndex = 1;
+        //        else if (_avgPower >= -35 && _avgPower < -25)
+        //            imageIndex = 2;
+        //        else if (_avgPower >= -25 && _avgPower < -15)
+        //            imageIndex = 3;
+        //        else if (_avgPower >= -15)
+        //            imageIndex = 4;
+        
         CGFloat volumn = [self.recorder updateVolumn];
         
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDouble:volumn];
@@ -195,6 +195,12 @@
         [_timer invalidate];
         if (self.doNotSaveFile) {
             [self.recorder stopRecordingAndDeleteFile];
+            if (self.callbackId) {
+                CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                            messageAsString:@"stop recording"];
+                [result setKeepCallbackAsBool:YES];
+                [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+            }
         } else {
             [self stopRecordIngImp];
             [self.recorder stopRecording];
@@ -267,7 +273,7 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
-
+    
     [self stop:nil];
 }
 
@@ -280,15 +286,24 @@
 }
 
 - (void)willEnterForeground {
-//    [self.recorder startRecording];
+    //    [self.recorder startRecording];
 }
 
 #pragma mark - XMNAudioRecorderDelegate
 /** 录音成功后回调 */
 - (void)didRecordFinishWithRecorder:(XMNAudioRecorder * _Nonnull)recorder {
     
+    [_timer invalidate];
     [self.commandDelegate runInBackground:^{
-        if (self.callbackId) {
+        if (self.doNotSaveFile) {
+            [self.recorder stopRecordingAndDeleteFile];
+            if (self.callbackId) {
+                CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                            messageAsString:@"stop recording"];
+                [result setKeepCallbackAsBool:NO];
+                [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
+            }
+        } else if (self.callbackId) {
             CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:0.0f];
             [result setKeepCallbackAsBool:NO];
             [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
@@ -317,7 +332,7 @@
             }
         }
     }];
-
+    
 }
 
 @end
